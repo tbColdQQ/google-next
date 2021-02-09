@@ -80,6 +80,26 @@ export default function Home() {
           <div className="item-title">添加快捷方式</div>
         </a>
       </div>
+      <div className="mask">
+        <div className="mask-body">
+          <div className="dialog-title">添加快捷方式</div>
+          <div className="form">
+            <div className="form-item">
+              <label>名称</label>
+              <input />
+            </div>
+            <div className="form-item">
+              <label>网址</label>
+              <input />
+            </div>
+          </div>
+          <div className="btn-group">
+            <div className="btn default-btn remove-btn">移除</div>
+            <div className="btn default-btn cancel-btn">取消</div>
+            <div className="btn primary-btn complate-btn">完成</div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
