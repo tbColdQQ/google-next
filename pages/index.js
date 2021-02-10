@@ -95,8 +95,10 @@ export default function Home() {
           </div>
           <div className="btn-group">
             <div className="btn default-btn remove-btn">移除</div>
-            <div className="btn default-btn cancel-btn">取消</div>
-            <div className="btn primary-btn complate-btn">完成</div>
+            <div style={{display: 'flex'}}>
+              <div className="btn default-btn cancel-btn">取消</div>
+              <div className="btn primary-btn complate-btn">完成</div>
+            </div>
           </div>
         </div>
       </div>
