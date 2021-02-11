@@ -1,5 +1,14 @@
 
 export default function Home() {
+
+  const showDialog = () => {
+
+  }
+
+  const saveTag = (title, url) => {
+    
+  }
+
   return (
     <div className="container">
       <img src="./images/logo.svg" className="logo"/>
