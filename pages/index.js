@@ -1,12 +1,47 @@
 
 export default function Home() {
 
-  const showDialog = () => {
+  const [list, setList] = useState([])
+  const [currentUrl, setCurrentUrl] = useState('')
+  const [index, setIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(-1)
+  const [isShow, setIsShow] = useState(false)
 
+  const showDialog = () => {
+    setIsShow(true)
+  }
+
+  const hideDialog = () => {
+    setIsShow(false)
+  }
+
+  const createTag = (title, url) => {
+    index++
+    let tempList = [...list].push({title, url, index: index}}
+    setList(tempList)
   }
 
   const saveTag = (title, url) => {
-    
+    let tempList = [...list]
+    let item = tempList.filter(obj => obj.index === currentIndex)[0]
+    item.title = title
+    item.url = url
+    setList(tempList)
+  }
+
+  const editTag = (type, title, url) => {
+    if (type === 'add') {
+      setCurrentIndex(-1)
+      createTag(title, url)
+    } else {
+      setCurrentIndex(type)
+      saveTag(title, url)
+    }
+  }
+
+  const handleRemove = () => {
+    let tempList = [...list].filter(item.url === currentUrl)
+    StyleSheetList(tempList)
   }
 
   return (
@@ -19,7 +54,7 @@ export default function Home() {
       </div>
       <div className="most-visited">
         <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
+          <img src="./images/more.svg" onClick={editTag} className="more-icon"/>
           <div className="item-icon">
             <img src="https://github.com/favicon.ico"/>
           </div>
@@ -91,7 +126,7 @@ export default function Home() {
       </div>
       <div className="mask">
         <div className="mask-body">
-          <div className="dialog-title">添加快捷方式</div>
+          <div className="dialog-title" onClick={showDialog}>添加快捷方式</div>
           <div className="form">
             <div className="form-item">
               <label>名称</label>
@@ -103,10 +138,10 @@ export default function Home() {
             </div>
           </div>
           <div className="btn-group">
-            <div className="btn default-btn remove-btn">移除</div>
+            <div className="btn default-btn remove-btn" onClick={handleRemove}>移除</div>
             <div style={{display: 'flex'}}>
-              <div className="btn default-btn cancel-btn">取消</div>
-              <div className="btn primary-btn complate-btn">完成</div>
+              <div className="btn default-btn cancel-btn" onClick={hideDialog}>取消</div>
+              <div className="btn primary-btn complate-btn" onClick={editTag}>完成</div>
             </div>
           </div>
         </div>
