@@ -15,6 +15,10 @@ export default function Home() {
     setIsShow(false)
   }
 
+  const jumpTo = url => {
+    window.open(url)
+  }
+
   const createTag = (title, url) => {
     index++
     let tempList = [...list].push({title, url, index: index}}
@@ -53,69 +57,17 @@ export default function Home() {
         <div className="mic-icon" style={{backgroundImage: 'url(./images/mic.svg)'}}></div>
       </div>
       <div className="most-visited">
-        <a className="visited-item">
-          <img src="./images/more.svg" onClick={editTag} className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
-        <a className="visited-item">
-          <img src="./images/more.svg" className="more-icon"/>
-          <div className="item-icon">
-            <img src="https://github.com/favicon.ico"/>
-          </div>
-          <div className="item-title">Github</div>
-        </a>
+        {
+          list.map(item => (
+            <a className="visited-item" onClick={() => jumpTo(item.url)}>
+              <img src="./images/more.svg" onClick={() => editTag(item.index)} className="more-icon"/>
+              <div className="item-icon">
+                <img src="https://github.com/favicon.ico"/>
+              </div>
+              <div className="item-title">{item.title}</div>
+            </a>
+          ))
+        }
         <a className="visited-item">
           {/* <img src="./images/more.svg" className="more-icon"/> */}
           <div className="item-icon">
