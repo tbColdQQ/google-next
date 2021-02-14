@@ -1,3 +1,12 @@
+import { useState } from 'react'
+
+function useUpdateInput (initialValue) {
+  const [value, setValue] = useState(initialValue)
+  return {
+    value,
+    onChange: event => setValue(event.target.value)
+  }
+}
 
 export default function Home() {
 
@@ -6,6 +15,9 @@ export default function Home() {
   const [index, setIndex] = useState(0)
   const [currentIndex, setCurrentIndex] = useState(-1)
   const [isShow, setIsShow] = useState(false)
+
+  const titleInput = useUpdateInput('')
+  const urlInput = useUpdateInput('')
 
   const showDialog = () => {
     setIsShow(true)
@@ -20,9 +32,12 @@ export default function Home() {
   }
 
   const createTag = (title, url) => {
-    index++
-    let tempList = [...list].push({title, url, index: index}}
+    let tempIndex = index + 1
+    let tempList = [...list]
+    tempList.push({title, url, index: tempIndex, key: tempIndex})
+    console.log('tempList--->', tempList)
     setList(tempList)
+    setIndex(tempIndex)
   }
 
   const saveTag = (title, url) => {
@@ -33,13 +48,13 @@ export default function Home() {
     setList(tempList)
   }
 
-  const editTag = (type, title, url) => {
+  const editTag = type => {
     if (type === 'add') {
       setCurrentIndex(-1)
-      createTag(title, url)
+      createTag(titleInput.value, urlInput.value)
     } else {
       setCurrentIndex(type)
-      saveTag(title, url)
+      saveTag(titleInput.value, urlInput.value)
     }
   }
 
@@ -59,7 +74,7 @@ export default function Home() {
       <div className="most-visited">
         {
           list.map(item => (
-            <a className="visited-item" onClick={() => jumpTo(item.url)}>
+            <a className="visited-item" key={item.key} onClick={() => jumpTo(item.url)}>
               <img src="./images/more.svg" onClick={() => editTag(item.index)} className="more-icon"/>
               <div className="item-icon">
                 <img src="https://github.com/favicon.ico"/>
@@ -68,7 +83,7 @@ export default function Home() {
             </a>
           ))
         }
-        <a className="visited-item">
+        <a className="visited-item" onClick={createTag}>
           {/* <img src="./images/more.svg" className="more-icon"/> */}
           <div className="item-icon">
             <img src="./images/add.svg"/>
@@ -76,17 +91,17 @@ export default function Home() {
           <div className="item-title">添加快捷方式</div>
         </a>
       </div>
-      <div className="mask">
+      <div className="mask" style={{display: isShow ? 'block' : 'none'}}>
         <div className="mask-body">
           <div className="dialog-title" onClick={showDialog}>添加快捷方式</div>
           <div className="form">
             <div className="form-item">
               <label>名称</label>
-              <input />
+              <input name="title" {...titleInput}/>
             </div>
             <div className="form-item">
               <label>网址</label>
-              <input />
+              <input name="url" {...urlInput}/>
             </div>
           </div>
           <div className="btn-group">
