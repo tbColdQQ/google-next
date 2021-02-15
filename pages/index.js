@@ -4,23 +4,53 @@ function useUpdateInput (initialValue) {
   const [value, setValue] = useState(initialValue)
   return {
     value,
-    onChange: event => setValue(event.target.value)
+    onChange: event => setValue(event.target.value),
+    setValue
   }
+}
+
+function useList (initialValue) {
+  const [value, setValue] = useState(initialValue)
+  let lsList = ''
+  // let lsList = window.localStorage.getItem('list')
+  return [
+    lsList ? JSON.parse(lsList) : value,
+    list => {
+      setValue(list)
+      // window.localStorage.setItem('list', JSON.stringify(list))
+    }
+  ]
+}
+
+function getFavicon (url) {
+  let tempUrl = url
+  if (tempUrl.indexOf('http') < 0) tempUrl = 'http://' + tempUrl
+  let matcht = /^(https?:\/\/)([0-9a-z.]+)(:[0-9]+)?([/0-9a-z.]+)?(\?[0-9a-z&=]+)?(#[0-9-a-z]+)?/i
+  let result = matcht.exec(tempUrl)
+  return result[1] + result[2] + '/favicon.ico'
 }
 
 export default function Home() {
 
-  const [list, setList] = useState([])
-  const [currentUrl, setCurrentUrl] = useState('')
+  const [list, setList] = useList([])
   const [index, setIndex] = useState(0)
-  const [currentIndex, setCurrentIndex] = useState(-1)
   const [isShow, setIsShow] = useState(false)
+  const [type, setType] = useState('add')
 
   const titleInput = useUpdateInput('')
   const urlInput = useUpdateInput('')
 
-  const showDialog = () => {
+  const showDialog = (t, e) => {
     setIsShow(true)
+    setType(t)
+    if (t !== 'add') {
+      let item = list.filter(obj => obj.index === t)[0]
+      if (item) {
+        titleInput.setValue(item.title)
+        urlInput.setValue(item.url)
+      }
+    }
+    e.stopPropagation()
   }
 
   const hideDialog = () => {
@@ -28,39 +58,49 @@ export default function Home() {
   }
 
   const jumpTo = url => {
-    window.open(url)
+    if (url.indexOf('http') < 0) {
+      window.open('//' + url)
+    } else {
+      window.open(url)
+    }
   }
 
   const createTag = (title, url) => {
     let tempIndex = index + 1
     let tempList = [...list]
-    tempList.push({title, url, index: tempIndex, key: tempIndex})
-    console.log('tempList--->', tempList)
+    tempList.push({title, url, index: tempIndex, key: tempIndex, icon: getFavicon(url)})
+    if (tempList.length > 9) tempList.splice(9)
     setList(tempList)
     setIndex(tempIndex)
+    setIsShow(false)
   }
 
   const saveTag = (title, url) => {
     let tempList = [...list]
-    let item = tempList.filter(obj => obj.index === currentIndex)[0]
+    let item = tempList.filter(obj => obj.index === type)[0]
     item.title = title
     item.url = url
+    item.icon = getFavicon(url)
     setList(tempList)
+    setIsShow(false)
   }
 
-  const editTag = type => {
+  const editTag = () => {
     if (type === 'add') {
-      setCurrentIndex(-1)
       createTag(titleInput.value, urlInput.value)
     } else {
-      setCurrentIndex(type)
       saveTag(titleInput.value, urlInput.value)
     }
+    titleInput.setValue('')
+    urlInput.setValue('')
   }
 
   const handleRemove = () => {
-    let tempList = [...list].filter(item.url === currentUrl)
-    StyleSheetList(tempList)
+    let tempList = [...list].filter(item => item.index !== type)
+    setList(tempList)
+    setIsShow(false)
+    titleInput.setValue('')
+    urlInput.setValue('')
   }
 
   return (
@@ -75,15 +115,15 @@ export default function Home() {
         {
           list.map(item => (
             <a className="visited-item" key={item.key} onClick={() => jumpTo(item.url)}>
-              <img src="./images/more.svg" onClick={() => editTag(item.index)} className="more-icon"/>
+              <img src="./images/more.svg" onClick={event => showDialog(item.index, event)} className="more-icon"/>
               <div className="item-icon">
-                <img src="https://github.com/favicon.ico"/>
+                <img src={item.icon}/>
               </div>
               <div className="item-title">{item.title}</div>
             </a>
           ))
         }
-        <a className="visited-item" onClick={createTag}>
+        <a className="visited-item" onClick={event => showDialog('add', event)}>
           {/* <img src="./images/more.svg" className="more-icon"/> */}
           <div className="item-icon">
             <img src="./images/add.svg"/>
@@ -91,9 +131,9 @@ export default function Home() {
           <div className="item-title">添加快捷方式</div>
         </a>
       </div>
-      <div className="mask" style={{display: isShow ? 'block' : 'none'}}>
+      <div className="mask" style={{display: isShow ? 'flex' : 'none'}}>
         <div className="mask-body">
-          <div className="dialog-title" onClick={showDialog}>添加快捷方式</div>
+          <div className="dialog-title">添加快捷方式</div>
           <div className="form">
             <div className="form-item">
               <label>名称</label>
